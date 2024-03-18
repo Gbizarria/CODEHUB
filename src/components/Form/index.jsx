@@ -88,8 +88,7 @@ function UserLogin(data){
                 })
                 
                 .catch((erro)=>{
-                  toast.update
-                  (id,
+                  toast.update (id,
                     {
                       render:`${erro.response.data.message}`, type:'error',isLoading:false,autoClose:1800
                     },
