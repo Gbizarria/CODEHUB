@@ -7,14 +7,13 @@ import {useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { RegisterSchema,LoginSchema} from './SchemaRegister';
-import { api } from '../../services/api';
-import { toast } from 'react-toastify';
-import { DataContext } from '../../context/DataContext';
+import { LoginContext } from '../../context/LoginContext';
+import { RegisterContext } from '../../context/RegisterContext';
 
 const Form = ({type}) => {
   const navigate = useNavigate();
-  const {setDataUser} = useContext(DataContext)
-
+  const {login} = useContext(LoginContext)
+  const {newUser} = useContext(RegisterContext)
 
 const {register:registerUser,handleSubmit:handleSubmitUser,reset:resetFormRegister,formState:{errors: errorsUser}} = useForm({
   resolver:zodResolver(RegisterSchema),
@@ -25,99 +24,95 @@ const {register: registerLogin, handleSubmit: handleSubmitLogin,resetField:reset
     resolver: zodResolver(LoginSchema)
 })
 
-  function NewRegister (data){
-    const PostNewUser = async()=>{     
-      const id = toast.loading('Please Wait...')
-       await api.post('/users',data,{
-        headers:{
-          "Content-Type":"application/json"
-        }
+//   function NewRegister (data){ 
+//     const PostNewUser = async()=>{     
+//       const id = toast.loading('Please Wait...')
+//        await api.post('/users',data,{
+//         headers:{
+//           "Content-Type":"application/json"
+//         }
         
-     }).then((Response)=>{toast.update(id,{render:'Usuário criado com sucesso',type:'success',isLoading:false,autoClose:1100})},
-      setTimeout(() => {
-        resetFormRegister()
-      }, 4000),
-       setTimeout(() => {
-        navigate('/')
-      }, 5000)
+//      }).then((Response)=>{toast.update(id,{render:'Usuário criado com sucesso',type:'success',isLoading:false,autoClose:1100})},
+//       setTimeout(() => {
+//         resetFormRegister()
+//       }, 4000),
+//        setTimeout(() => {
+//         navigate('/')
+//       }, 5000)
       
-      )  
+//       )  
 
-      .catch((error)=> {
-        if(error.status === 401){
+//       .catch((error)=> {
+//         if(error.status === 401){
 
-          toast.update(id,
-          {
-            render:`Email de usuário existente`,
-            type:'error',
-            isLoading:false,
-            autoClose:2000
-          })
-        }else{
-          toast.update(id,
-            {
-              render:`${error.response.data.message}`,
-              type:'error',
-              isLoading:false,
-              autoClose:2000
-            })
-        }
+//           toast.update(id,
+//           {
+//             render:`Email de usuário existente`,
+//             type:'error',
+//             isLoading:false,
+//             autoClose:2000
+//           })
+//         }else{
+//           toast.update(id,
+//             {
+//               render:`${error.response.data.message}`,
+//               type:'error',
+//               isLoading:false,
+//               autoClose:2000
+//             })
+//         }
 
-      })
+//       })
        
-      }
-      PostNewUser() 
-};
+//       }
+//       PostNewUser() 
+// };
   
 
-function UserLogin(data){
+// function UserLogin(data){
         
-        const login = async () =>{
-          const id = toast.loading('Please Wait...')
-          const response = await api.post('/sessions',data ,{
-             headers:{ 
-               "Content-Type":"application/json"
-             }
-           })
-           .then((res)=> {toast.update(id,{render:'Entrando...', type:'success', isLoading:false,autoClose:1000})
-               localStorage.setItem('token',JSON.stringify(res.data.token)),
-                setDataUser(res.data.user),
-              setTimeout(() => {
-                    navigate('/dashboard')
-                  }, 1250)                  
-                })
+//         const login = async () =>{
+//           const id = toast.loading('Please Wait...')
+//           const response = await api.post('/sessions',data ,{
+//              headers:{ 
+//                "Content-Type":"application/json"
+//              }
+//            })
+//            .then((res)=> {toast.update(id,{render:'Entrando...', type:'success', isLoading:false,autoClose:1000})
+//                localStorage.setItem('token',JSON.stringify(res.data.token)),
+//                 setDataUser(res.data.user),
+//               setTimeout(() => {
+//                     navigate('/dashboard')
+//                   }, 1250)                  
+//                 })
                 
-                .catch((erro)=>{
-                  toast.update (id,
-                    {
-                      render:`${erro.response.data.message}`, type:'error',isLoading:false,autoClose:1800
-                    },
-                    console.log(erro)
-                  )
-                  setTimeout(() => {
+//                 .catch((erro)=>{
+//                   toast.update (id,
+//                     {
+//                       render:`${erro.response.data.message}`, type:'error',isLoading:false,autoClose:1800
+//                     },
+//                     console.log(erro)
+//                   )
+//                   setTimeout(() => {
                     
-                    resetFieldLogin('password')
-                  }, 1810);
-                })
+//                     resetFieldLogin('password')
+//                   }, 1810);
+//                 })
 
                     
-              } 
-              login()         
-  }
-  
-
-
+//               } 
+//               login()         
+//   }
 function handleClick (e){
 navigate(e)    
 }
-
 
 
   return (
     
     <>
     {type == 'Login'?    
-    <FormStyle onSubmit={handleSubmitLogin(UserLogin)}>
+    <FormStyle onSubmit={handleSubmitLogin((data)=>login(data,resetFieldLogin))}>
       <Label htmlFor='email'>Email</Label>
       <Inputs type='email' id='email' {...registerLogin('email')}/>
       {errosLogin.email?<ErroStyle>{errosLogin.email.message}</ErroStyle>:null}
@@ -136,7 +131,7 @@ navigate(e)
      
 : type == 'Register'?
 
-    <FormStyle onSubmit={handleSubmitUser(NewRegister)}>
+    <FormStyle onSubmit={handleSubmitUser((data)=>newUser(data,resetFormRegister))}>
       <Label htmlFor='nome'>Nome</Label>
       <Inputs type='text' id='nome' {...registerUser('name')}/>
       {errorsUser.name?<ErroStyle>{errorsUser.name.message}</ErroStyle>:null}

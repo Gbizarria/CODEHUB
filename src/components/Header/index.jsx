@@ -3,32 +3,37 @@
 import React from 'react'
 import { HeaderStyle,Button } from './style'
 import Title from '../Title'
-import { useNavigate } from 'react-router-dom'
+import { useContext } from 'react'
+import { LogoutContext } from '../../context/LogoutContext'
+import { Outlet } from 'react-router-dom'
 
 const Header = ({position,width,actionbutton}) => {
-  const navigate = useNavigate();
+  const {logout,backPage} = useContext(LogoutContext)
 
-  function handleClick (type){
-    localStorage.clear()
-    navigate(type)
-  }
+ 
   return (
-   actionbutton == 'exit'?
+    <>
+  { actionbutton == 'exit'?
 
    <HeaderStyle position={position} width={width}>
     <Title>CODE HUB</Title>
 
-    <Button type='button' onClick={()=>{handleClick('/')}}>Sair</Button>
+    <Button type='button' onClick={logout}>Sair</Button>
    </HeaderStyle>
 
    :actionbutton == 'return'?
    <HeaderStyle position={position} width={width}>
    <Title>CODE HUB</Title>
 
-   <Button type='button' onClick={()=>{handleClick('/')}}>Voltar</Button>
+   <Button type='button' onClick={()=> {backPage('/')}}>Voltar</Button>
   </HeaderStyle>
 
-  :null
+  :null}
+
+  <Outlet/>
+    </>
+
+  
   )
 }
 

@@ -1,12 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { SectionStyle,DivStyle, H2Text, PText } from './style'
 import Header from '../Header'
 import Main from '../Main'
-import { DataContext } from '../../context/DataContext'
+import { LoginContext } from '../../context/LoginContext'
 const Dashboard = () => {
 
-const {dataUser} = useContext(DataContext)
+const {dataUser,autoLogin} = useContext(LoginContext)
+
+useEffect(() => {
+  autoLogin()
+},[])
 
   return (
     <>

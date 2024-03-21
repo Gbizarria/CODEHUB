@@ -7,7 +7,7 @@ z.object({
 
     email:z.string().nonempty('Campo obrigatório').email('Forneça um email válido'),
 
-     password:z.string().nonempty('Campo obrigatório').min(8,'Sua senha deve conter pelo menos 8 dígitos'),
+     password:z.string().nonempty('Campo obrigatório').min(6,'Sua senha deve conter pelo menos 6 dígitos'),
 
     Confirmpassword:z.string().nonempty('Campo obrigatório'),
 
